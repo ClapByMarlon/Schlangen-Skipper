@@ -19,8 +19,10 @@ unveraendert.
 
 ## Build und Tests
 
-Java 8 und die vorhandene lokale LabyMod-API in `libs/lm_api_mc1.8.9.jar`
-werden benoetigt.
+Java 8 und eine lokale LabyMod-3-API werden benoetigt. Die API-JAR ist
+nicht Bestandteil dieses Repositorys. Vor dem ersten Build das Verzeichnis
+`libs` erstellen und die passende API als `libs/lm_api_mc1.8.9.jar` ablegen.
+Die Datei wird durch `.gitignore` von der Versionierung ausgeschlossen.
 
 ```powershell
 .\gradlew.bat test build
