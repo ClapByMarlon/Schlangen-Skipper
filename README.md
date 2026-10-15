@@ -30,7 +30,7 @@ Die Datei wird durch `.gitignore` von der Versionierung ausgeschlossen.
 .\gradlew.bat test build
 ```
 
-Ergebnis: `build/libs/schlangen-skipper-1.0.3.jar`.
+Ergebnis: `build/libs/schlangen-skipper-1.0.4.jar`.
 Die Regressionstests pruefen das explizite Oeffnen, die Kaufsperre fuer alle
 Maustasten, das erneute Sperren nach einem Seitenaufbau und die Isolation
 von unabhaengig geoeffneten Botshops.
