@@ -2,8 +2,8 @@
   {
     "modid": "schlangen_skipper",
     "name": "Schlangen Skipper",
-    "description": "Botshop-Browser f\u00fcr LabyMod 3: Bots suchen, nach API filtern und GrieferUtils-Angebote von \u00fcberall ansehen. K\u00e4ufe sind gesperrt.",
-    "version": "1.0.4",
+    "description": "Du kannst die Botshop-GUI von \u00fcberall \u00f6ffnen.",
+    "version": "1.0.5",
     "mcversion": "1.8.9",
     "authorList": ["ClapByMarlon"],
     "clientSideOnly": true
