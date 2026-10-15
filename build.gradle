@@ -28,6 +28,7 @@ repositories {
 
 dependencies {
     compile files("libs/lm_api_mc1.8.9.jar")
+    testCompile "junit:junit:4.13.2"
 }
 
 minecraft {

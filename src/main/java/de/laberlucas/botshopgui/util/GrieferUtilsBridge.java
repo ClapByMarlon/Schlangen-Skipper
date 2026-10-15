@@ -32,6 +32,7 @@ public class GrieferUtilsBridge {
     private long nextBotshopRequestMs;
     private long activeRequestId;
     private long nextProtectionCheckMs;
+    private volatile String status;
 
     public GrieferUtilsBridge(BotShopAddon addon) {
         this.addon = addon;
@@ -56,12 +57,14 @@ public class GrieferUtilsBridge {
         botshopRequestInFlight = true;
         botshopRequestStartedMs = now;
         nextBotshopRequestMs = now + BOTSHOP_REQUEST_COOLDOWN_MS;
+        status = "\u00a77Botshop wird geladen...";
 
         try {
             final Object bot = createPrivateBot(botInfo.getUuid(), botInfo.getApiUrl());
             Object sync = findMethod(bot.getClass(), "sync").invoke(bot);
             if (!(sync instanceof CompletableFuture)) {
                 finishBotshopRequest(requestId);
+                status = "\u00a7cGrieferUtils ist nicht kompatibel.";
                 return false;
             }
 
@@ -75,6 +78,7 @@ public class GrieferUtilsBridge {
                                 return;
                             }
                             if (throwable != null || !(result instanceof Boolean) || !((Boolean) result).booleanValue() || !hasItems(bot)) {
+                                status = "\u00a7cBotshop konnte nicht geladen werden (API/Anmeldung/Items).";
                                 return;
                             }
 
@@ -86,8 +90,24 @@ public class GrieferUtilsBridge {
             return true;
         } catch (Throwable throwable) {
             finishBotshopRequest(requestId);
+            status = "\u00a7cGrieferUtils fehlt oder ist nicht kompatibel.";
             return false;
         }
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public boolean protectBotshopInput(Object screen) {
+        if (screen == null || screen != protectedScreen) {
+            return false;
+        }
+        if (patchBuySlot(screen)) {
+            return false;
+        }
+        status = "\u00a7cKaufsperre konnte nicht gesetzt werden.";
+        return true;
     }
 
     private synchronized boolean finishBotshopRequest(long requestId) {
@@ -137,7 +157,10 @@ public class GrieferUtilsBridge {
 
         nextProtectionCheckMs = now + PROTECTION_INTERVAL_MS;
         protectionUntilMs = now + 30000L;
-        patchBuySlot(currentScreen);
+        if (!patchBuySlot(currentScreen)) {
+            mc.displayGuiScreen(null);
+            status = "\u00a7cKaufsperre konnte nicht gesetzt werden.";
+        }
         removeQueuedPayCommands();
     }
 
@@ -181,40 +204,39 @@ public class GrieferUtilsBridge {
                 protectedScreen = gui;
                 protectionUntilMs = System.currentTimeMillis() + 30000L;
                 nextProtectionCheckMs = System.currentTimeMillis() + PROTECTION_INTERVAL_MS;
-                patchBuySlot(gui);
+                ReadOnlyBotshopGui.open(gui, Class.forName(GUI_BIG_CHEST_CLASS), BUY_SLOT, createBuyBlocker());
             } else {
                 protectedScreen = null;
                 protectionUntilMs = 0L;
+                findMethod(guiClass, "open").invoke(gui);
             }
+            status = null;
         } catch (Throwable throwable) {
-            addon.notify("\u00a7cGrieferUtils-GUI konnte nicht erstellt werden.");
+            if (Minecraft.getMinecraft().currentScreen == protectedScreen) {
+                Minecraft.getMinecraft().displayGuiScreen(null);
+            }
+            protectedScreen = null;
+            status = "\u00a7cGrieferUtils-GUI konnte nicht ge\u00f6ffnet werden.";
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void patchBuySlot(Object gui) {
+    private Runnable createBuyBlocker() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                protectionUntilMs = System.currentTimeMillis() + 30000L;
+                removeQueuedPayCommands();
+            }
+        };
+    }
+
+    private boolean patchBuySlot(Object gui) {
         try {
             Class<?> guiBigChest = Class.forName(GUI_BIG_CHEST_CLASS);
-            Runnable blocker = new Runnable() {
-                @Override
-                public void run() {
-                    protectionUntilMs = System.currentTimeMillis() + 30000L;
-                    removeQueuedPayCommands();
-                }
-            };
-
-            for (String fieldName : new String[]{"leftClickEvents", "rightClickEvents", "midClickEvents"}) {
-                Field field = guiBigChest.getDeclaredField(fieldName);
-                field.setAccessible(true);
-                Object value = field.get(gui);
-                if (value instanceof List) {
-                    List<Runnable> events = (List<Runnable>) value;
-                    if (events.size() > BUY_SLOT) {
-                        events.set(BUY_SLOT, blocker);
-                    }
-                }
-            }
+            ReadOnlyBotshopGui.blockBuying(gui, guiBigChest, BUY_SLOT, createBuyBlocker());
+            return true;
         } catch (Throwable ignored) {
+            return false;
         }
     }
 

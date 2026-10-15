@@ -96,6 +96,14 @@ public class BotShopAddon extends LabyModAddon {
         }
     }
 
+    public String getBotshopStatus() {
+        return grieferUtilsBridge == null ? null : grieferUtilsBridge.getStatus();
+    }
+
+    public boolean protectBotshopInput(Object screen) {
+        return grieferUtilsBridge != null && grieferUtilsBridge.protectBotshopInput(screen);
+    }
+
     public String getBotDisplayName(String uuid) {
         if (grieferUtilsBridge != null) {
             String grieferUtilsName = grieferUtilsBridge.getBotDisplayName(uuid);

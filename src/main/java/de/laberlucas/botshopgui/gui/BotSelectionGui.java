@@ -219,6 +219,10 @@ public class BotSelectionGui extends GuiScreen {
             status += " \u00a78\u2022 \u00a7c" + repository.getLastError();
         }
 
+        String botshopStatus = addon.getBotshopStatus();
+        if (botshopStatus != null) {
+            status = botshopStatus;
+        }
         int margin = getScreenMargin();
         int actionWidth = getToolbarActionWidth();
         int actionGap = getToolbarActionGap();
