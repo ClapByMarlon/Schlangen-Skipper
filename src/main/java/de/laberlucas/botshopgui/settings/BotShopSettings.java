@@ -19,8 +19,10 @@ public class BotShopSettings {
     private static final String ENABLED = "botshopGuiEnabled";
     private static final String OPEN_KEY = "botshopGuiOpenKey";
     private static final String ALL_BOTS_KEY = "botshopGuiAllBotsKey";
+    private static final String AUTO_UPDATE = "autoUpdateEnabled";
 
     private boolean enabled = true;
+    private boolean autoUpdateEnabled = true;
     private int openKey = Keyboard.KEY_RSHIFT;
     private boolean openKeyWasDown;
 
@@ -34,6 +36,7 @@ public class BotShopSettings {
         }
 
         enabled = readBoolean(config, ENABLED, enabled);
+        autoUpdateEnabled = readBoolean(config, AUTO_UPDATE, autoUpdateEnabled);
         openKey = readInt(config, OPEN_KEY, openKey);
         openKey = readInt(config, ALL_BOTS_KEY, openKey);
     }
@@ -61,6 +64,20 @@ public class BotShopSettings {
             }
         }));
 
+        botshop.getSubSettings().add(new BooleanElement(
+            "Automatische Updates",
+            addon,
+            new ControlElement.IconData(Material.REDSTONE),
+            AUTO_UPDATE,
+            autoUpdateEnabled
+        ).addCallback(new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean value) {
+                autoUpdateEnabled = value.booleanValue();
+                writeBoolean(AUTO_UPDATE, autoUpdateEnabled);
+            }
+        }));
+
         botshop.getSubSettings().add(new KeyElement(
             "Öffnen Taste",
             addon,
@@ -75,6 +92,10 @@ public class BotShopSettings {
                 writeInt(OPEN_KEY, openKey);
             }
         }));
+    }
+
+    public boolean isAutoUpdateEnabled() {
+        return autoUpdateEnabled;
     }
 
     public boolean consumeOpenPress() {

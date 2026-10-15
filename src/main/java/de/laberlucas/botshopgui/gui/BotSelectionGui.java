@@ -222,6 +222,8 @@ public class BotSelectionGui extends GuiScreen {
         String botshopStatus = addon.getBotshopStatus();
         if (botshopStatus != null) {
             status = botshopStatus;
+        } else if (addon.getUpdateStatus() != null) {
+            status = addon.getUpdateStatus();
         }
         int margin = getScreenMargin();
         int actionWidth = getToolbarActionWidth();

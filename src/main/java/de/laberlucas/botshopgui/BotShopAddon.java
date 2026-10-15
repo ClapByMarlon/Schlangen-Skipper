@@ -8,6 +8,8 @@ import de.laberlucas.botshopgui.util.BotRepository.BotInfo;
 import de.laberlucas.botshopgui.util.BotRepository.BotUpdateListener;
 import de.laberlucas.botshopgui.util.BotRepository;
 import de.laberlucas.botshopgui.util.GrieferUtilsBridge;
+import de.laberlucas.botshopgui.update.AddonAutoUpdater;
+import net.labymod.addon.AddonLoader;
 import net.labymod.api.LabyModAddon;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
@@ -17,10 +19,14 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 public class BotShopAddon extends LabyModAddon {
 
     private static BotShopAddon instance;
+    private static final AtomicBoolean UPDATE_CHECK_STARTED = new AtomicBoolean();
+    private volatile String updateStatus;
 
     private BotShopSettings settings;
     private BotRepository botRepository;
@@ -50,6 +56,40 @@ public class BotShopAddon extends LabyModAddon {
 
         FMLCommonHandler.instance().bus().register(tickHandler);
         MinecraftForge.EVENT_BUS.register(tickHandler);
+        startUpdateCheck();
+    }
+
+    private void startUpdateCheck() {
+        if (!settings.isAutoUpdateEnabled() || !UPDATE_CHECK_STARTED.compareAndSet(false, true)) {
+            return;
+        }
+        Thread worker = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File currentJar = AddonLoader.getJarFileByClass(BotShopAddon.class);
+                    if (currentJar == null) {
+                        return;
+                    }
+                    String version = new AddonAutoUpdater().checkAndInstall(
+                        currentJar, AddonLoader.getDeleteQueueFile()
+                    );
+                    if (version != null) {
+                        updateStatus = "\u00a7aUpdate " + version + " geladen - Neustart erforderlich.";
+                    }
+                } catch (Exception exception) {
+                    Logger.getLogger("Schlangen Skipper").warning(
+                        "Update check failed (" + exception.getClass().getSimpleName() + "). Keeping installed version."
+                    );
+                }
+            }
+        }, "Schlangen Skipper Update");
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    public String getUpdateStatus() {
+        return updateStatus;
     }
 
     @Override
