@@ -7,6 +7,8 @@ Autor: **ClapByMarlon**.
 ## Funktionen
 
 - Botshop-Browser mit der bisherigen dunklen Oberfläche und pinken Buttons.
+- Chat, Scoreboard und HUD sind während der Botliste ausgeblendet. Beim
+  Schließen wird die vorherige HUD-Sichtbarkeit wiederhergestellt.
 - Suche nach Spielername oder UUID, API-Auswahl und bedienbare Scrollbar.
 - Botlisten und Namensauflösung mit persistenten Caches und Rate-Limits.
 - LabyMod-4-Einstellungen mit Aktivierung und frei wählbarer Öffnen-Taste.
@@ -30,8 +32,9 @@ In diesem Verzeichnis ausführen:
 Installierbare Datei: `build/libs/schlangen-skipper-laby4-release.jar`.
 Die kleineren Zwischen-JARs sind nicht zur Installation geeignet.
 
-Die Tests prüfen Release-Metadaten, den GrieferUtils-ClassLoader, Übersetzungen, den Ausschluss von
-LabyMod-3-/Forge-Abhängigkeiten und die gemeinsame Kaufsperre.
+Die Tests prüfen Release-Metadaten, den GrieferUtils-ClassLoader, Übersetzungen,
+den Ausschluss von LabyMod-3-/Forge-Abhängigkeiten, die gemeinsame Kaufsperre
+und das Wiederherstellen der HUD-Sichtbarkeit nach dem Schließen der Botliste.
 
 ## Installation
 

@@ -1,6 +1,6 @@
 package de.laberlucas.botshopgui;
 
-import de.laberlucas.botshopgui.gui.BotSelectionGui;
+import de.laberlucas.botshopgui.gui.Laby4BotSelectionGui;
 import de.laberlucas.botshopgui.util.BotNameResolver;
 import de.laberlucas.botshopgui.util.BotRepository;
 import de.laberlucas.botshopgui.util.GrieferUtilsBridge;
@@ -65,7 +65,7 @@ public final class BotShopAddon extends LabyAddon<BotShopConfiguration> {
         Minecraft minecraft = Minecraft.getMinecraft();
         if (pressed && minecraft.thePlayer != null && minecraft.theWorld != null
             && minecraft.currentScreen == null) {
-            minecraft.displayGuiScreen(new BotSelectionGui(this));
+            minecraft.displayGuiScreen(new Laby4BotSelectionGui(this));
         }
     }
 

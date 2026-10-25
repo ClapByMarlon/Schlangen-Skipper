@@ -40,6 +40,28 @@ public class Laby4ReleaseTest {
     }
 
     @Test
+    public void releaseOpensBrowserWithScopedHudVisibility() throws Exception {
+        try (JarFile jar = release()) {
+            var main = jar.getJarEntry("de/laberlucas/botshopgui/BotShopAddon.class");
+            assertNotNull(main);
+            try (InputStream input = jar.getInputStream(main)) {
+                String bytecode = new String(input.readAllBytes(), StandardCharsets.ISO_8859_1);
+                assertTrue(bytecode.contains("de/laberlucas/botshopgui/gui/Laby4BotSelectionGui"));
+            }
+            var browser = jar.getJarEntry("de/laberlucas/botshopgui/gui/Laby4BotSelectionGui.class");
+            assertNotNull(browser);
+            try (InputStream input = jar.getInputStream(browser)) {
+                String bytecode = new String(input.readAllBytes(), StandardCharsets.ISO_8859_1);
+                assertTrue(bytecode.contains("HudVisibility"));
+                assertTrue(bytecode.contains("hideGUI"));
+                assertTrue(bytecode.contains("initGui"));
+                assertTrue(bytecode.contains("onGuiClosed"));
+                assertTrue(bytecode.contains("restore"));
+            }
+        }
+    }
+
+    @Test
     public void releaseProvidesTranslationsForNativeSettings() throws Exception {
         try (JarFile jar = release()) {
             for (String language : new String[]{"de_de", "en_us"}) {
