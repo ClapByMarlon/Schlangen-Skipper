@@ -1,5 +1,6 @@
 val sharedSources = tasks.register<Sync>("syncSharedSources") {
     inputs.property("guiInputExceptionAdapter", "vanilla-1.8.9-v1")
+    inputs.property("grieferUtilsClassLoaderAdapter", "laby4-addon-service-v1")
     filteringCharset = "UTF-8"
     from("../../src/main/java") {
         include("de/laberlucas/botshopgui/util/BotRepository.java")
@@ -10,6 +11,10 @@ val sharedSources = tasks.register<Sync>("syncSharedSources") {
         filesMatching("**/BotSelectionGui.java") {
             // The vanilla LabyMod 4 mappings omit Forge's checked input exceptions.
             filter { line: String -> line.replace(" throws IOException", "") }
+        }
+        filesMatching("**/GrieferUtilsBridge.java") {
+            filter { line: String -> line.replace("Class.forName(",
+                "de.laberlucas.botshopgui.GrieferUtilsClasses.load(") }
         }
     }
     into(layout.buildDirectory.dir("generated/shared-java"))

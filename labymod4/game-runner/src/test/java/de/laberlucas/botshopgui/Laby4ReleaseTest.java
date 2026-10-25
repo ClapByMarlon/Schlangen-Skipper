@@ -26,6 +26,20 @@ public class Laby4ReleaseTest {
     }
 
     @Test
+    public void releaseLoadsGrieferUtilsThroughItsOwnAddonClassLoader() throws Exception {
+        try (JarFile jar = release()) {
+            var entry = jar.getJarEntry("de/laberlucas/botshopgui/util/GrieferUtilsBridge.class");
+            assertNotNull(entry);
+            try (InputStream input = jar.getInputStream(entry)) {
+                String bytecode = new String(input.readAllBytes(), StandardCharsets.ISO_8859_1);
+                assertTrue(bytecode.contains("de/laberlucas/botshopgui/GrieferUtilsClasses"));
+                assertFalse(bytecode.contains("forName"));
+            }
+            assertNotNull(jar.getJarEntry("de/laberlucas/botshopgui/GrieferUtilsClasses.class"));
+        }
+    }
+
+    @Test
     public void releaseProvidesTranslationsForNativeSettings() throws Exception {
         try (JarFile jar = release()) {
             for (String language : new String[]{"de_de", "en_us"}) {

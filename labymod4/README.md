@@ -30,7 +30,7 @@ In diesem Verzeichnis ausführen:
 Installierbare Datei: `build/libs/schlangen-skipper-laby4-release.jar`.
 Die kleineren Zwischen-JARs sind nicht zur Installation geeignet.
 
-Die Tests prüfen Release-Metadaten, Übersetzungen, den Ausschluss von
+Die Tests prüfen Release-Metadaten, den GrieferUtils-ClassLoader, Übersetzungen, den Ausschluss von
 LabyMod-3-/Forge-Abhängigkeiten und die gemeinsame Kaufsperre.
 
 ## Installation
@@ -55,4 +55,6 @@ für LabyMod 4 installiert werden.
 Konfiguration. Gemeinsame Bot-, Cache- und GUI-Quellen werden beim Bauen aus
 `../src` übernommen. Lediglich die Forge-spezifischen `IOException`-Signaturen
 der GUI-Eingabemethoden werden für die Vanilla-SDK-Klassen angepasst.
-Die erzeugten Quellen und SDK-Dateien werden nicht versioniert.
+Die GrieferUtils-Klassen werden in dieser Variante über die öffentliche
+AddonService-API aus dem ClassLoader des installierten GrieferUtils-Addons
+geladen. Die erzeugten Quellen und SDK-Dateien werden nicht versioniert.
