@@ -1,5 +1,7 @@
 # Schlangen Skipper
 
+Lizenz: [**GPL-3.0 license**](LICENSE).
+
 Die zusätzliche [LabyMod-4-Version für Minecraft 1.8.9](labymod4/README.md)
 liegt im Unterordner `labymod4` und hat einen eigenen Build. Die folgende
 Anleitung beschreibt die bisherige LabyMod-3-Version.
