@@ -1,5 +1,9 @@
 # Schlangen Skipper
 
+Die zusätzliche [LabyMod-4-Version für Minecraft 1.8.9](labymod4/README.md)
+liegt im Unterordner `labymod4` und hat einen eigenen Build. Die folgende
+Anleitung beschreibt die bisherige LabyMod-3-Version.
+
 Eigenständiges LabyMod-3-Addon für Minecraft 1.8.9 von ClapByMarlon.
 Die Botliste kann per Hotkey (standardmäßig rechte Umschalttaste) im Spiel
 geöffnet werden. Suche und API-Filter wählen den Botshop aus.

@@ -1,0 +1,14 @@
+{
+  "schlangen_skipper": {
+    "settings": {
+      "name": "Schlangen Skipper",
+      "enabled": {
+        "name": "Enabled"
+      },
+      "openKey": {
+        "name": "Open botshop browser",
+        "description": "Opens the bot list in-game. Offers can be viewed but purchases are disabled."
+      }
+    }
+  }
+}

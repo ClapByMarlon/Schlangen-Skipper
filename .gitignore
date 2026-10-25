@@ -8,6 +8,10 @@ run/
 .idea/
 *.iml
 /libs/*.jar
+/labymod4/.labygradle/
+/labymod4/game-runner/libs/
+/labymod4/**/.assetsroot
+/labymod4/**/resources_index.json
 *.class
 *.pem
 *.key
