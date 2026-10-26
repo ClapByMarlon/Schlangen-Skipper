@@ -1,0 +1,39 @@
+{
+  "namespace": "griefer_utils",
+  "displayName": "GrieferUtils",
+  "description": "👋",
+  "version": "2.4.7",
+  "author": "L3g7, L3g73",
+  "requiredLabyModBuild": 3231,
+  "releaseChannel": "production",
+  "os": [],
+  "compatibleMinecraftVersions": "1.8.9",
+  "mainClass": "dev.l3g7.griefer_utils.labymod.laby4.Main",
+  "build": {
+    "namedMappings": true
+  },
+  "meta": [
+    "RESTART_REQUIRED",
+    "BACKGROUND"
+  ],
+  "mavenDependencies": [],
+  "addonDependencies": [],
+  "incompatibles": [],
+  "entrypoints": {
+    "EARLY_INITIALIZATION": [
+      {
+        "name": "dev.l3g7.griefer_utils.labymod.laby4.Init",
+        "version": "1.8.9",
+        "priority": 900
+      }
+    ]
+  },
+  "earlyTransformers": [],
+  "addonVersion": "2.4.7",
+  "debug": "true",
+  "beta": "false",
+  "transformerClass": "dev.l3g7.griefer_utils.labymod.laby3.Init",
+  "name": "GrieferUtils",
+  "uuid": "%uuid%",
+  "icon": "griefer_utils_icon"
+}
