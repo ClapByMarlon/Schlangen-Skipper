@@ -1,5 +1,7 @@
 # Schlangen Skipper
 
+<img src="Laby4/game-runner/src/v1_8_9/resources/assets/schlangen_skipper/textures/icon.png" alt="Schlangen Skipper" width="160" height="160">
+
 Du kannst die Botshop-GUI von überall öffnen.
 Für **Minecraft 1.8.9**, von **ClapByMarlon**.
 

@@ -7,10 +7,31 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.jar.JarFile;
+import javax.imageio.ImageIO;
 
 import static org.junit.Assert.*;
 
 public class Laby4ReleaseTest {
+
+    @Test
+    public void releaseBundlesAddonIconAtNativeLaby4PathWithTransparentCorners() throws Exception {
+        try (JarFile jar = release()) {
+            var entry = jar.getJarEntry("assets/schlangen_skipper/textures/icon.png");
+            assertNotNull(entry);
+            try (InputStream input = jar.getInputStream(entry)) {
+                var image = ImageIO.read(input);
+                assertNotNull(image);
+                assertEquals(image.getWidth(), image.getHeight());
+                assertTrue(image.getWidth() >= 64);
+                assertTrue(image.getColorModel().hasAlpha());
+                int last = image.getWidth() - 1;
+                for (int[] point : new int[][]{{0, 0}, {last, 0}, {0, last}, {last, last}}) {
+                    assertEquals(0, image.getRGB(point[0], point[1]) >>> 24);
+                }
+                assertTrue((image.getRGB(last / 2, last / 2) >>> 24) > 0);
+            }
+        }
+    }
 
     @Test
     public void releaseContainsLaby4EntrypointForMinecraft189() throws Exception {

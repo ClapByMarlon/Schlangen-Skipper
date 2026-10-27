@@ -11,5 +11,5 @@
   "category": 2,
   "offline": true,
   "compatibleMinecraftVersions": "1.8.9",
-  "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAHklEQVR42mNk+M9Qz0AEYBxVSF+oYVoY1TAqBgBflgIRf3d6jQAAAABJRU5ErkJggg=="
+  "icon": "https://raw.githubusercontent.com/ClapByMarlon/Schlangen-Skipper/main/Laby3/src/main/resources/assets/schlangen_skipper/textures/icon.png"
 }

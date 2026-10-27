@@ -14,6 +14,10 @@ Die Botliste öffnet sich im Spiel mit der rechten Umschalttaste.
 Suche und API-Filter wählen einen Botshop aus. Die über dieses Addon
 geöffneten Shops erlauben nur das Ansehen der Angebote.
 
+Das Addon-Icon liegt unter `src/main/resources/assets/schlangen_skipper/textures/icon.png`.
+LabyMod 3 lädt es über die GitHub-URL aus `addon.json`; dafür ist eine
+Internetverbindung erforderlich. Die PNG wird zusätzlich in die JAR gepackt.
+
 ## Bauen
 
 Java 8 und eine lokale LabyMod-3-API werden benötigt. Die API-JAR ist nicht
