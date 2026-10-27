@@ -231,7 +231,7 @@ public class AddonAutoUpdaterTest {
         String tag = (platform == AddonAutoUpdater.Platform.LABY3 ? "laby3" : "laby4") + "-v1.0.3";
         release.addProperty("tag_name", tag);
         asset().addProperty("browser_download_url",
-            "https://github.com/ClapByMarlon/botshop-gui/releases/download/" + tag + "/" + target().getName());
+            "https://github.com/ClapByMarlon/Schlangen-Skipper/releases/download/" + tag + "/" + target().getName());
         assertEquals("1.0.3", runUpdate());
     }
 
@@ -309,7 +309,7 @@ public class AddonAutoUpdaterTest {
     }
 
     private String downloadUrl(String version) {
-        return "https://github.com/ClapByMarlon/botshop-gui/releases/download/v" + version
+        return "https://github.com/ClapByMarlon/Schlangen-Skipper/releases/download/v" + version
             + "/" + platform.assetName(version);
     }
 

@@ -30,9 +30,9 @@ import java.util.jar.JarFile;
 public final class AddonAutoUpdater {
 
     public static final String RELEASES_URL =
-        "https://api.github.com/repos/ClapByMarlon/botshop-gui/releases?per_page=100";
+        "https://api.github.com/repos/ClapByMarlon/Schlangen-Skipper/releases?per_page=100";
     private static final String DOWNLOAD_BASE =
-        "https://github.com/ClapByMarlon/botshop-gui/releases/download/";
+        "https://github.com/ClapByMarlon/Schlangen-Skipper/releases/download/";
     private static final String ADDON_UUID = "a8d3fbba-09e5-42cc-9e75-1875f404157a";
     private static final String MAIN_CLASS = "de.laberlucas.botshopgui.BotShopAddon";
     private static final long MAX_JAR_BYTES = 20L * 1024 * 1024;
