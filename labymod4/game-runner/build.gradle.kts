@@ -39,13 +39,15 @@ dependencies {
     labyProcessor()
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.code.gson:gson:2.14.0")
+    testImplementation("org.ow2.asm:asm-tree:9.9.1")
     testImplementation(files(sourceSets["v1_8_9"].output))
 }
 
 tasks.test {
     dependsOn(rootProject.tasks.named("createReleaseJar"))
+    systemProperty("minecraftClasspath", sourceSets["v1_8_9"].compileClasspath.asPath)
     systemProperty("releaseJar", rootProject.layout.buildDirectory.file(
-        "libs/schlangen-skipper-laby4-release.jar"
+        "libs/schlangen_skipper-release.jar"
     ).get().asFile.absolutePath)
 }
 

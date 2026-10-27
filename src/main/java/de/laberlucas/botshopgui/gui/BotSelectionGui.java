@@ -5,6 +5,7 @@ import de.laberlucas.botshopgui.util.BotRepository;
 import de.laberlucas.botshopgui.util.BotRepository.BotInfo;
 import de.laberlucas.botshopgui.util.BotRepository.SourceInfo;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
@@ -61,19 +62,32 @@ public class BotSelectionGui extends GuiScreen {
 
     @Override
     public void initGui() {
+        String search = searchField == null ? "" : searchField.getText();
         Keyboard.enableRepeatEvents(true);
         searchX = getScreenMargin() + getScaledX(18);
         searchY = getToolbarTop() + Math.max(4, (getToolbarHeight() - getControlHeight()) / 2);
         searchWidth = Math.max(150, getScaledX(637));
 
         buttonList.clear();
-        searchField = new GuiTextField(0, fontRendererObj, searchX + 8, getSearchTextY(), searchWidth - 16, 18);
+        searchField = createSearchField(fontRendererObj, searchX + 8, searchY, searchWidth - 16, getControlHeight());
         searchField.setEnableBackgroundDrawing(false);
         searchField.setMaxStringLength(64);
+        searchField.setText(search);
         searchField.setFocused(true);
         rebuildButtons();
         refreshFilteredBots();
         setupBlurShader();
+    }
+
+    protected GuiTextField createSearchField(FontRenderer font, int x, int y, int fieldWidth, int fieldHeight) {
+        return new GuiTextField(0, font, x, y + Math.max(0, (fieldHeight - font.FONT_HEIGHT) / 2), fieldWidth, 18);
+    }
+
+    @Override
+    public void updateScreen() {
+        if (searchField != null) {
+            searchField.updateCursorCounter();
+        }
     }
 
     @Override

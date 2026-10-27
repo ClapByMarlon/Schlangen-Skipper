@@ -7,8 +7,9 @@ Autor: **ClapByMarlon**.
 ## Funktionen
 
 - Botshop-Browser mit der bisherigen dunklen Oberfläche und pinken Buttons.
-- Chat, Scoreboard und HUD sind während der Botliste ausgeblendet. Beim
-  Schließen wird die vorherige HUD-Sichtbarkeit wiederhergestellt.
+- Chat, Scoreboard und HUD werden während der Botliste nicht gerendert.
+  Nachrichten werden weiter empfangen; HUD-Einstellungen bleiben unverändert.
+- Eigenes Suchfeld ohne LabyMod-Ersatzrahmen, mit zentriertem Text und Cursor.
 - Suche nach Spielername oder UUID, API-Auswahl und bedienbare Scrollbar.
 - Botlisten und Namensauflösung mit persistenten Caches und Rate-Limits.
 - LabyMod-4-Einstellungen mit Aktivierung und frei wählbarer Öffnen-Taste.
@@ -29,12 +30,12 @@ In diesem Verzeichnis ausführen:
 .\gradlew.bat build createReleaseJar
 ```
 
-Installierbare Datei: `build/libs/schlangen-skipper-laby4-release.jar`.
+Installierbare Datei: `build/libs/schlangen_skipper-release.jar`.
 Die kleineren Zwischen-JARs sind nicht zur Installation geeignet.
 
 Die Tests prüfen Release-Metadaten, den GrieferUtils-ClassLoader, Übersetzungen,
 den Ausschluss von LabyMod-3-/Forge-Abhängigkeiten, die gemeinsame Kaufsperre
-und das Wiederherstellen der HUD-Sichtbarkeit nach dem Schließen der Botliste.
+und die Registrierung der auf die Botliste begrenzten Render-Sperren.
 
 ## Installation
 
@@ -42,7 +43,9 @@ und das Wiederherstellen der HUD-Sichtbarkeit nach dem Schließen der Botliste.
 2. Die Release-JAR in den `addons`-Ordner der LabyMod-4-Installation legen.
    Der Standardpfad unter Windows ist
    `%APPDATA%\.minecraft\labymod-neo\addons`.
-3. Minecraft neu starten und unter „Schlangen Skipper“ den Hotkey einstellen.
+3. Die alte LabyMod-4-JAR ersetzen, nicht beide Dateien gleichzeitig installieren.
+4. Minecraft vollständig neu starten und unter „Schlangen Skipper“ den Hotkey
+   einstellen. Die Render-Sperren verwenden Mixins und benötigen einen Neustart.
 
 Die Mindestversion von LabyMod steht als `requiredLabyModBuild` in der vom
 SDK erzeugten `addon.json`. Im Spiel muss eine mindestens so neue

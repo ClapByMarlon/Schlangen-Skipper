@@ -1,15 +1,21 @@
 package de.laberlucas.botshopgui;
 
 import de.laberlucas.botshopgui.gui.Laby4BotSelectionGui;
+import de.laberlucas.botshopgui.gui.ScopedVisibility;
 import de.laberlucas.botshopgui.util.BotNameResolver;
 import de.laberlucas.botshopgui.util.BotRepository;
 import de.laberlucas.botshopgui.util.GrieferUtilsBridge;
+import net.labymod.api.Laby;
 import net.labymod.api.addon.LabyAddon;
+import net.labymod.api.client.gui.screen.widget.widgets.activity.Document;
 import net.labymod.api.event.Phase;
 import net.labymod.api.event.Priority;
 import net.labymod.api.event.Subscribe;
 import net.labymod.api.event.client.input.MouseButtonEvent;
 import net.labymod.api.event.client.lifecycle.GameTickEvent;
+import net.labymod.api.event.client.render.GameRenderEvent;
+import net.labymod.api.event.client.render.ScreenRenderEvent;
+import net.labymod.api.event.client.render.overlay.IngameOverlayRenderEvent;
 import net.labymod.api.models.addon.annotation.AddonMain;
 import net.minecraft.client.Minecraft;
 
@@ -22,10 +28,13 @@ public final class BotShopAddon extends LabyAddon<BotShopConfiguration> {
     private BotNameResolver names;
     private GrieferUtilsBridge grieferUtils;
     private boolean openKeyWasDown;
+    private final ScopedVisibility<Document> overlays = new ScopedVisibility<>(
+        Document::isVisible, Document::setVisible);
 
     @Override
     protected void enable() {
         registerSettingCategory();
+        Laby.references().widgetConverterRegistry().exclude(Laby4BotSelectionGui.class);
         File cacheDirectory = new File(Minecraft.getMinecraft().mcDataDir,
             "labymod-neo/configs/schlangen_skipper/cache");
         names = new BotNameResolver(null, new File(cacheDirectory, "names.json"));
@@ -74,6 +83,42 @@ public final class BotShopAddon extends LabyAddon<BotShopConfiguration> {
         if (grieferUtils.protectBotshopInput(Minecraft.getMinecraft().currentScreen)) {
             event.setCancelled(true);
         }
+    }
+
+    @Subscribe(Priority.FIRST)
+    public void onGameRender(GameRenderEvent event) {
+        if (event.phase() == Phase.PRE) {
+            updateBrowserOverlays();
+        }
+    }
+
+    @Subscribe(Priority.FIRST)
+    public void onOverlayRender(IngameOverlayRenderEvent event) {
+        updateBrowserOverlays();
+    }
+
+    @Subscribe(Priority.FIRST)
+    public void onScreenRender(ScreenRenderEvent event) {
+        updateBrowserOverlays();
+    }
+
+    private void updateBrowserOverlays() {
+        if (Minecraft.getMinecraft().currentScreen instanceof Laby4BotSelectionGui) {
+            hideBrowserOverlays();
+        } else {
+            restoreBrowserOverlays();
+        }
+    }
+
+    public void hideBrowserOverlays() {
+        // Hide only the UI documents, not chat reception, widget ticking or user settings.
+        for (var activity : labyAPI().ingameOverlay().getActivities()) {
+            overlays.hide(activity.document());
+        }
+    }
+
+    public void restoreBrowserOverlays() {
+        overlays.restore();
     }
 
     public BotRepository getBotRepository() {

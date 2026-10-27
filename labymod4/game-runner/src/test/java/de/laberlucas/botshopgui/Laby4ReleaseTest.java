@@ -40,7 +40,7 @@ public class Laby4ReleaseTest {
     }
 
     @Test
-    public void releaseOpensBrowserWithScopedHudVisibility() throws Exception {
+    public void releaseOpensBrowserWithItsOwnSearchField() throws Exception {
         try (JarFile jar = release()) {
             var main = jar.getJarEntry("de/laberlucas/botshopgui/BotShopAddon.class");
             assertNotNull(main);
@@ -52,12 +52,11 @@ public class Laby4ReleaseTest {
             assertNotNull(browser);
             try (InputStream input = jar.getInputStream(browser)) {
                 String bytecode = new String(input.readAllBytes(), StandardCharsets.ISO_8859_1);
-                assertTrue(bytecode.contains("HudVisibility"));
-                assertTrue(bytecode.contains("hideGUI"));
-                assertTrue(bytecode.contains("initGui"));
-                assertTrue(bytecode.contains("onGuiClosed"));
-                assertTrue(bytecode.contains("restore"));
+                assertTrue(bytecode.contains("BrowserSearchField"));
+                assertTrue(bytecode.contains("createSearchField"));
+                assertFalse(bytecode.contains("hideGUI"));
             }
+            assertNull(jar.getJarEntry("de/laberlucas/botshopgui/gui/HudVisibility.class"));
         }
     }
 

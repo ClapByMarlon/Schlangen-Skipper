@@ -1,34 +1,27 @@
 package de.laberlucas.botshopgui.gui;
 
 import de.laberlucas.botshopgui.BotShopAddon;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiTextField;
 
 public final class Laby4BotSelectionGui extends BotSelectionGui {
 
-    private final HudVisibility hud = new HudVisibility(
-        () -> Minecraft.getMinecraft().gameSettings.hideGUI,
-        hidden -> Minecraft.getMinecraft().gameSettings.hideGUI = hidden
-    );
+    private final BotShopAddon addon;
 
     public Laby4BotSelectionGui(BotShopAddon addon) {
         super(addon);
+        this.addon = addon;
     }
 
     @Override
     public void initGui() {
-        hud.hide();
+        addon.hideBrowserOverlays();
         try {
             super.initGui();
         } catch (RuntimeException | Error failure) {
-            hud.restore();
+            addon.restoreBrowserOverlays();
             throw failure;
         }
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        hud.hide();
-        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -36,7 +29,12 @@ public final class Laby4BotSelectionGui extends BotSelectionGui {
         try {
             super.onGuiClosed();
         } finally {
-            hud.restore();
+            addon.restoreBrowserOverlays();
         }
+    }
+
+    @Override
+    protected GuiTextField createSearchField(FontRenderer font, int x, int y, int width, int height) {
+        return new BrowserSearchField(font, x, y, width, height);
     }
 }

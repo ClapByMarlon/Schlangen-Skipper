@@ -1,4 +1,4 @@
-rootProject.name = "schlangen-skipper-laby4"
+rootProject.name = "schlangen_skipper"
 
 pluginManagement {
     repositories {
