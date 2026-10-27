@@ -1,0 +1,18 @@
+{
+  "schlangen_skipper": {
+    "settings": {
+      "name": "Schlangen Skipper",
+      "enabled": {
+        "name": "Enabled"
+      },
+      "openKey": {
+        "name": "Open botshop browser",
+        "description": "Opens the bot list in-game. Offers can be viewed but purchases are disabled."
+      },
+      "autoUpdate": {
+        "name": "Automatic updates",
+        "description": "Checks once at game startup for a new LabyMod 4 version. Restart after downloading to apply it."
+      }
+    }
+  }
+}

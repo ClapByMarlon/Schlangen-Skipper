@@ -1,0 +1,81 @@
+# Schlangen Skipper für LabyMod 4
+
+Diese Variante unterstützt **LabyMod 4 auf Minecraft 1.8.9**. Sie liegt im
+gleichen Repository wie die LabyMod-3-Version und wird separat gebaut.
+Autor: **ClapByMarlon**.
+
+## Funktionen
+
+- Botshop-Browser mit der bisherigen dunklen Oberfläche und pinken Buttons.
+- Chat, Scoreboard und HUD werden während der Botliste nicht gerendert.
+  Nachrichten werden weiter empfangen; HUD-Einstellungen bleiben unverändert.
+- Eigenes Suchfeld ohne LabyMod-Ersatzrahmen, mit zentriertem Text und Cursor.
+- Suche nach Spielername oder UUID, API-Auswahl und bedienbare Scrollbar.
+- Botlisten und Namensauflösung mit persistenten Caches und Rate-Limits.
+- LabyMod-4-Einstellungen mit Aktivierung und frei wählbarer Öffnen-Taste.
+- Standard-Hotkey: rechte Umschalttaste. Öffnen funktioniert nur im Spiel,
+  ohne ein bereits geöffnetes Menü.
+- Angebote werden über [GrieferUtils](https://github.com/L3g7/GrieferUtils)
+  geladen. Käufe bleiben in der Browser-Ansicht gesperrt. Unabhängig über
+  GrieferUtils geöffnete Botshops bleiben unverändert.
+
+## Bauen
+
+Voraussetzungen: JDK 21 und Internetzugang für das offizielle LabyMod-SDK.
+Die LabyMod-3-API aus `../Laby3/libs` wird nicht benötigt.
+
+In diesem Verzeichnis ausführen:
+
+```powershell
+.\gradlew.bat build createReleaseJar
+```
+
+Installierbare Datei: **`schlangen-skipper-laby4-1.0.2.jar`**, direkt in `Laby4`.
+Sie entspricht `build/libs/schlangen_skipper-release.jar`.
+Die kleineren Zwischen-JARs sind nicht zur Installation geeignet.
+
+Die Tests prüfen Release-Metadaten, den GrieferUtils-ClassLoader, Übersetzungen,
+den Ausschluss von LabyMod-3-/Forge-Abhängigkeiten, die gemeinsame Kaufsperre
+und die Registrierung der auf die Botliste begrenzten Render-Sperren.
+
+## Installation
+
+1. LabyMod 4 für Minecraft 1.8.9 und dessen GrieferUtils-Version installieren.
+2. Die Release-JAR in den `addons`-Ordner der LabyMod-4-Installation legen.
+   Der Standardpfad unter Windows ist
+   `%APPDATA%\.minecraft\labymod-neo\addons`.
+3. Die alte LabyMod-4-JAR ersetzen, nicht beide Dateien gleichzeitig installieren.
+4. Minecraft vollständig neu starten und unter „Schlangen Skipper“ den Hotkey
+   einstellen. Die Render-Sperren verwenden Mixins und benötigen einen Neustart.
+
+Die Mindestversion von LabyMod steht als `requiredLabyModBuild` in der vom
+SDK erzeugten `addon.json`. Im Spiel muss eine mindestens so neue
+LabyMod-Version installiert sein.
+
+## Automatische Updates
+
+Das Addon prüft beim Start einmal im Hintergrund die stabilen GitHub-Releases.
+**Automatische Updates** kann in den Addon-Einstellungen ausgeschaltet werden.
+Nur `schlangen-skipper-laby4-X.Y.Z.jar` mit Tag `laby4-vX.Y.Z` oder `vX.Y.Z`
+wird akzeptiert. Auch die Metadaten der JAR werden auf LabyMod 4 geprüft;
+LabyMod-3-Dateien sind keine gültigen Updates.
+
+Eine neue JAR wird nach Größen-, SHA-256- und Identitätsprüfung neben der
+laufenden Datei im tatsächlichen Addon-Verzeichnis installiert. Beim nächsten
+Start lädt LabyMod 4 die höhere Version desselben Namespaces. Die alte JAR
+bleibt als inaktive Rückfallkopie liegen. Die LabyMod-4-Löschwarteschlange
+würde alle JARs des Namespaces entfernen und wird deshalb nicht benutzt.
+Keine Chat-Ausgaben und keine wiederholten Update-Abfragen in derselben Sitzung.
+
+Details zum [Veröffentlichen von Updates](../README.md#updates-veröffentlichen).
+Ohne ein veröffentlichtes Release gibt es noch nichts herunterzuladen.
+
+## Aufbau
+
+`game-runner/src/v1_8_9` enthält den LabyMod-4-Einstiegspunkt und die native
+Konfiguration. Gemeinsame Bot-, Cache- und GUI-Quellen werden beim Bauen aus
+`../Laby3/src` übernommen. Lediglich die Forge-spezifischen `IOException`-Signaturen
+der GUI-Eingabemethoden werden für die Vanilla-SDK-Klassen angepasst.
+Die GrieferUtils-Klassen werden in dieser Variante über die öffentliche
+AddonService-API aus dem ClassLoader des installierten GrieferUtils-Addons
+geladen. Die erzeugten Quellen und SDK-Dateien werden nicht versioniert.

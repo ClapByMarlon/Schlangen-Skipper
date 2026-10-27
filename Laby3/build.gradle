@@ -1,0 +1,67 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = "https://maven.minecraftforge.net/" }
+        maven { url = "https://jitpack.io/" }
+    }
+    dependencies {
+        classpath "com.github.gatooooooo:ForgeGradle:FG_2.1-SNAPSHOT"
+    }
+}
+
+plugins {
+    id "java"
+}
+
+apply plugin: "net.minecraftforge.gradle.forge"
+
+group = "de.laberlucas.botshopgui"
+archivesBaseName = "schlangen-skipper-laby3"
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+    maven { url = "https://maven.minecraftforge.net/" }
+    maven { url = "https://jitpack.io/" }
+}
+
+dependencies {
+    compile files("libs/lm_api_mc1.8.9.jar")
+    testCompile "junit:junit:4.13.2"
+}
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    mappings = "stable_22"
+    makeObfSourceJar = false
+    clientJvmArgs += [
+        "-Dfml.coreMods.load=net.labymod.core.asm.LabyModCoreMod",
+        "-DdebugMode=true",
+        "-Daddonresources=addon.json"
+    ]
+}
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+compileJava.options.encoding = "UTF-8"
+
+sourceSets.api.java.srcDirs = sourceSets.main.java.srcDirs
+sourceSets.api.resources.srcDirs = sourceSets.main.resources.srcDirs
+
+reobf {
+    jar {
+        useNotchSrg()
+    }
+}
+
+task exportAddon(type: Copy, dependsOn: "reobfJar") {
+    from jar.archivePath
+    into projectDir
+}
+task legacyUpdateBridge(type: Copy, dependsOn: "reobfJar") {
+    from jar.archivePath
+    into "$buildDir/legacy-update"
+    rename { "schlangen-skipper-${project.version}.jar" }
+}
+build.dependsOn exportAddon, legacyUpdateBridge

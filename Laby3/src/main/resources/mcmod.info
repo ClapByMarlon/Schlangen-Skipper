@@ -1,0 +1,11 @@
+[
+  {
+    "modid": "schlangen_skipper",
+    "name": "Schlangen Skipper",
+    "description": "Du kannst die Botshop-GUI von \u00fcberall \u00f6ffnen.",
+    "version": "1.0.6",
+    "mcversion": "1.8.9",
+    "authorList": ["ClapByMarlon"],
+    "clientSideOnly": true
+  }
+]

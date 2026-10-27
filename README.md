@@ -1,76 +1,73 @@
 # Schlangen Skipper
 
-Lizenz: [**GPL-3.0 license**](LICENSE).
+Du kannst die Botshop-GUI von überall öffnen.
+Für **Minecraft 1.8.9**, von **ClapByMarlon**.
 
-Die zusätzliche [LabyMod-4-Version für Minecraft 1.8.9](labymod4/README.md)
-liegt im Unterordner `labymod4` und hat einen eigenen Build. Die folgende
-Anleitung beschreibt die bisherige LabyMod-3-Version.
+Die Botliste bietet eine Suche nach Name oder UUID und einen API-Filter.
+Angebote werden über [GrieferUtils](https://github.com/L3g7/GrieferUtils)
+geladen. Über Schlangen Skipper geöffnete Botshops sind nur zum Ansehen;
+Käufe bleiben gesperrt. Normal über GrieferUtils geöffnete Shops bleiben
+unverändert. Standard-Hotkey: **rechte Umschalttaste**.
 
-Eigenständiges LabyMod-3-Addon für Minecraft 1.8.9 von ClapByMarlon.
-Die Botliste kann per Hotkey (standardmäßig rechte Umschalttaste) im Spiel
-geöffnet werden. Suche und API-Filter wählen den Botshop aus.
-Die über dieses Addon geöffneten
-[GrieferUtils](https://github.com/L3g7/GrieferUtils)-Botshops erlauben nur das
-Ansehen der Angebote. Normal über GrieferUtils geöffnete Botshops bleiben
-unverändert.
+## Version auswählen
 
-## Voraussetzungen und Installation
+| Ordner | Umgebung | Anleitung | Fertige lokale JAR |
+| --- | --- | --- | --- |
+| [Laby3](Laby3) | LabyMod 3 mit Forge | [Installation und Build](Laby3/README.md) | `Laby3/schlangen-skipper-laby3-1.0.6.jar` |
+| [Laby4](Laby4) | LabyMod 4 | [Installation und Build](Laby4/README.md) | `Laby4/schlangen-skipper-laby4-1.0.2.jar` |
 
-- Minecraft 1.8.9 mit Forge und LabyMod 3.
-- Eine kompatible [GrieferUtils-Version](https://github.com/L3g7/GrieferUtils);
-  siehe auch das [GrieferUtils-Wiki](https://grieferutils.wiki/).
-  Die Schnittstellen wurden gegen `2.4.8-BETA-5` geprüft.
-- Die Release-JAR kommt in `LabyMod/addons-1.8` der gewünschten Instanz.
-- Beim Wechsel vom Multi-Addon dessen Modul "Schlangen Skipper" deaktivieren,
-  damit Hotkey und API-Abfragen nicht doppelt ausgeführt werden.
-- Minecraft nach Austausch oder Installation der JAR neu starten.
-
-## Build und Tests
-
-Java 8 und eine lokale LabyMod-3-API werden benötigt. Die API-JAR ist
-nicht Bestandteil dieses Repositorys. Vor dem ersten Build das Verzeichnis
-`libs` erstellen und die passende API als `libs/lm_api_mc1.8.9.jar` ablegen.
-Die Datei wird durch `.gitignore` von der Versionierung ausgeschlossen.
-
-```powershell
-.\gradlew.bat test build
-```
-
-Ergebnis: `build/libs/schlangen-skipper-1.0.5.jar`.
-Die Regressionstests prüfen das explizite Öffnen, die Kaufsperre für alle
-Maustasten, das erneute Sperren nach einem Seitenaufbau und die Isolation
-von unabhängig geöffneten Botshops.
+Beide Projekte liegen im selben Repository. LabyMod 4 übernimmt gemeinsame
+Bot-, Cache-, GUI- und Updater-Quellen beim Build aus `Laby3/src`.
+Die JARs sind nicht untereinander austauschbar.
 
 ## Automatische Updates
 
-Das Addon prüft beim Spielstart einmal im Hintergrund das
-[neueste stabile GitHub-Release](https://github.com/ClapByMarlon/botshop-gui/releases/latest).
-Eine höhere Version wird automatisch heruntergeladen. GitHub-Zugangsdaten
-werden dafür nicht benötigt. Die Funktion lässt sich in den
-Addon-Einstellungen unter "Automatische Updates" abschalten; die Einstellung
-wird beim nächsten Start berücksichtigt.
+Beide Versionen prüfen beim Spielstart **einmal im Hintergrund** die
+[stabilen GitHub-Releases](https://github.com/ClapByMarlon/botshop-gui/releases).
+In den Addon-Einstellungen lässt sich **Automatische Updates** abschalten.
+Die Einstellung wird beim nächsten Start berücksichtigt.
 
-Vor der Installation prüft der Updater Dateigröße, SHA-256-Prüfsumme,
-Addon-UUID, Einstiegsklasse, Versionsnummer und Minecraft-Version. Die
-laufende JAR wird nicht überschrieben. Die neue Version wird daneben
-installiert, und nur die bisherige eigene JAR wird in die Löschwarteschlange
-von LabyMod eingetragen. Beim nächsten Minecraft-Start entfernt LabyMod die
-alte Datei vor dem Laden der Addons. Einstellungen und Caches bleiben erhalten.
-Nach dem Download zeigt die Botliste einen Neustarthinweis.
+- LabyMod 3 lädt ausschließlich `schlangen-skipper-laby3-X.Y.Z.jar`.
+- LabyMod 4 lädt ausschließlich `schlangen-skipper-laby4-X.Y.Z.jar`.
+- Tag: `laby3-vX.Y.Z` beziehungsweise `laby4-vX.Y.Z`; alternativ `vX.Y.Z`.
+- Der Updater durchsucht die letzten 100 Releases mit einer API-Anfrage.
+  Ein neueres Release der anderen Plattform blockiert das eigene Update nicht.
+- Vor der Installation werden Download-Adresse, Dateigröße, SHA-256,
+  Addon-Identität, Plattform, Version und Minecraft-Version geprüft.
+- Entwürfe, Vorabversionen und Downgrades werden nicht installiert.
+- Bei Fehlern bleibt die installierte JAR erhalten. Keine wiederholten
+  Update-Abfragen während derselben Sitzung und keine Chat-Ausgaben.
 
-Bei Netzwerkfehlern, GitHub-Rate-Limits oder ungültigen Downloads bleibt die
-installierte Version erhalten. Es gibt keine automatischen Wiederholungen
-während derselben Spielsitzung und keine Update-Meldungen im Chat.
+Die neue JAR wird **im tatsächlichen Addon-Verzeichnis der laufenden Instanz**
+abgelegt, nicht in einem fest vorgegebenen Minecraft-Ordner. Nach dem Download
+zeigt die Botliste einen Neustarthinweis. Die laufende JAR wird nie überschrieben.
+Bei LabyMod 3 entfernt dessen dateibasierte Löschwarteschlange beim nächsten
+Start die alte JAR. LabyMod 4 wählt beim Start die höhere Version desselben
+Namespaces; die alte JAR bleibt als inaktive Rückfallkopie erhalten. Seine
+namespacebasierte Löschwarteschlange wird ausdrücklich nicht verwendet.
 
-### Neue Version bereitstellen
+## Updates veröffentlichen
 
-1. Versionsnummer in `gradle.properties`, `addon.json` und `mcmod.info` erhöhen.
-2. `gradlew.bat test build` ausführen und den Quellstand committen.
-3. Ein stabiles GitHub-Release mit dem Tag `vX.Y.Z` für diesen Commit anlegen.
-4. Die fertige `schlangen-skipper-X.Y.Z.jar` als Release-Asset hochladen.
-   GitHub stellt dessen SHA-256-Digest in der Release-API bereit.
-5. Das Release erst nach dem Upload veröffentlichen. Entwürfe und
-   Vorabversionen werden vom Updater nicht installiert.
+1. Die Versionsnummer des betreffenden Projekts erhöhen, bauen und testen.
+   Bei LabyMod 3 auch `src/main/resources/addon.json` und `mcmod.info` anpassen.
+2. Ein stabiles GitHub-Release mit dem passenden Plattform-Tag erstellen.
+3. Die fertige JAR aus dem jeweiligen Ordner als **Release-Asset** hochladen.
+   GitHub liefert Dateigröße und SHA-256-Digest über seine
+   [Release-API](https://docs.github.com/en/rest/releases/releases).
+4. Das Release erst nach vollständigem Upload veröffentlichen.
 
-Ein Git-Push allein liefert kein Update; erforderlich ist ein veröffentlichtes
-Release mit passender JAR.
+Die lokal exportierten JARs und Build-Verzeichnisse sind in `.gitignore`
+ausgeschlossen. Binärdateien müssen **nicht in Git committed** werden.
+Ein Quellcode-Push allein stellt noch kein Update bereit.
+
+### Übergang von älteren LabyMod-3-Versionen
+
+Versionen bis 1.0.5 erwarten noch `schlangen-skipper-X.Y.Z.jar` im neuesten
+Release mit Tag `vX.Y.Z`. Der LabyMod-3-Build erzeugt deshalb zusätzlich eine
+identische Übergangsdatei in `Laby3/build/legacy-update/`.
+Für die einmalige Migration zu 1.0.6 beide LabyMod-3-Dateien in **`v1.0.6`**
+hochladen und dieses als neuestes Release markieren. LabyMod-4-Releases
+während der Migration nicht als global neuestes Release markieren.
+Ab 1.0.6 wählen die Clients ihren Update-Kanal unabhängig.
+
+Lizenz: [GPL-3.0](LICENSE).

@@ -1,0 +1,30 @@
+Unofficial local compatibility patch, 2026-10-26
+
+Upstream: GrieferUtils v2.4.7 by L3g7 and L3g73
+https://github.com/L3g7/GrieferUtils/releases/tag/v2.4.7
+Input SHA-256: 55e3decfd6a60ceb8a1308f95a43eade9e80a44da7b0a360cfa051149450f3be
+
+Changes: MixinPlugin skips missing optional Schematica/Lunatrius and Forge
+targets before computing mixinCount. Also skips the legacy GeometryColor
+error suppressor and MainMenuSkull hooks when those old classes are absent
+in LabyMod 4 (GeometryColor, Textures$Splash, Schematic). Absent legacy
+LabyMod 3 integration targets are likewise skipped; current LabyMod 4 API
+and core targets remain required.
+Available integrations remain active.
+The event bridge implements the LabyMod 48 SubscribeMethod interface while
+preserving its callbacks and priority, including replay and event flags.
+The optional tab-list badge percentage uses soft local capture with
+require=0 because the newer renderer has changed local variables. That
+badge decoration is omitted when the capture cannot be applied.
+The upstream debug build flag is set to true so that the updater compares
+versions instead of reverting this patch solely because its hash differs.
+Actual updates to newer versions are not disabled. All classes except
+MixinPlugin and its anonymous listener, the event bridge anonymous
+subscriber, and the tab-list badge percentage mixin are preserved byte for
+byte. The minimum LabyMod build is raised to 3231 for the new event API.
+All other metadata and resources, including LICENSE, are preserved.
+This is not an official release of GrieferUtils.
+
+License: Apache License 2.0; see the upstream LICENSE bundled in this JAR.
+Patch sources: Laby4/compatibility/grieferutils-2.4.7 in the local
+Schlangen Skipper source tree. No changes are made to Schlangen Skipper's JAR.
