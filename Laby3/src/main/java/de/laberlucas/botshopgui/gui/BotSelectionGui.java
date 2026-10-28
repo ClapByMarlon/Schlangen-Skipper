@@ -431,7 +431,7 @@ public class BotSelectionGui extends GuiScreen {
             apiRight = tabsRight - favoritesWidth - actionGap;
             uiButtons.add(new UiButton(BUTTON_FAVORITES, apiRight + actionGap, tabY,
                 favoritesWidth, navButtonHeight, label,
-                favoritesOnly ? COLOR_ACCENT : COLOR_SURFACE_HOVER, COLOR_ACCENT_HOVER));
+                COLOR_ACCENT, COLOR_ACCENT_HOVER));
         }
         String apiLabel = "API: " + getSelectedApiLabel();
         uiButtons.add(new UiButton(
@@ -539,9 +539,13 @@ public class BotSelectionGui extends GuiScreen {
     }
 
     private UiButton getFavoriteButton(int row) {
-        int size = Math.max(22, getRowControlHeight());
         int right = width - getScreenMargin() - getScaledX(71) - getScaledX(10);
-        int top = getListTop() + row * getRowHeight() + Math.max(5, getScaledY(26));
+        int cardTop = getListTop() + row * getRowHeight();
+        int cardHeight = getRowHeight() - Math.max(4, getScaledY(5));
+        int headerTop = cardTop + 7;
+        int headerBottom = cardTop + cardHeight - Math.max(16, getScaledY(27)) - 2;
+        int size = Math.min(getRowControlHeight(), headerBottom - headerTop);
+        int top = headerTop + (headerBottom - headerTop - size) / 2;
         return new UiButton(-1, right - size, top, size, size, "", COLOR_SURFACE, COLOR_SURFACE_HOVER);
     }
 
@@ -878,14 +882,17 @@ public class BotSelectionGui extends GuiScreen {
     }
 
     private static void drawButtonFrame(int left, int top, int right, int bottom, int radius, int fillColor, boolean hovered) {
-        int borderColor = hovered ? COLOR_BUTTON_BORDER_HOVER : COLOR_BUTTON_BORDER;
+        boolean accent = fillColor == COLOR_ACCENT || fillColor == COLOR_ACCENT_HOVER;
+        int borderColor = hovered
+            ? (accent ? COLOR_BUTTON_BORDER_HOVER : 0xFF516177) : COLOR_BUTTON_BORDER;
         drawRoundedRect(left + 2, top + 3, right + 2, bottom + 3, radius, 0x90000000);
         drawRoundedRect(left, top, right, bottom, radius, 0xFF05070B);
         drawRoundedRect(left + 1, top + 1, right - 1, bottom - 1, Math.max(2, radius - 1), borderColor);
         drawRoundedRect(left + 3, top + 3, right - 3, bottom - 3, Math.max(2, radius - 2), 0xFF0A0E15);
         drawRoundedRect(left + 5, top + 5, right - 5, bottom - 5, Math.max(1, radius - 3), fillColor);
         drawRoundedRect(left + 7, top + 5, right - 7, top + 6, 0,
-            hovered ? COLOR_BUTTON_HOVER_LINE : COLOR_BUTTON_HIGHLIGHT);
+            accent ? (hovered ? COLOR_BUTTON_HOVER_LINE : COLOR_BUTTON_HIGHLIGHT)
+                : (hovered ? 0xFF536176 : 0xFF3A4555));
     }
 
     private static void drawRoundedBorder(int left, int top, int right, int bottom, int radius, int borderColor, int fillColor) {
@@ -985,9 +992,6 @@ public class BotSelectionGui extends GuiScreen {
             boolean hovered = contains(mouseX, mouseY);
             int backgroundColor = hovered ? hoverColor : normalColor;
             drawButtonFrame(x, y, x + width, y + height, 5, backgroundColor, hovered);
-            if (hovered) {
-                drawRoundedRect(x + 4, y + height - 2, x + width - 4, y + height - 1, 0, COLOR_BUTTON_HOVER_LINE);
-            }
             int textX = x + (width - minecraft.fontRendererObj.getStringWidth(label)) / 2;
             minecraft.fontRendererObj.drawStringWithShadow(label, textX, y + (height - 8) / 2, 0xFFFFFFFF);
         }

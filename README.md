@@ -15,7 +15,7 @@ unverändert. Standard-Hotkey: **rechte Umschalttaste**.
 
 | Ordner | Umgebung | Anleitung | Fertige lokale JAR |
 | --- | --- | --- | --- |
-| [Laby3](Laby3) | LabyMod 3 mit Forge | [Installation und Build](Laby3/README.md) | `Laby3/schlangen-skipper-laby3-1.0.7.jar` |
+| [Laby3](Laby3) | LabyMod 3 mit Forge | [Installation und Build](Laby3/README.md) | `Laby3/schlangen-skipper-laby3-1.0.8.jar` |
 | [Laby4](Laby4) | LabyMod 4 | [Installation und Build](Laby4/README.md) | `Laby4/schlangen-skipper-laby4-1.0.2.jar` |
 
 Beide Projekte liegen im selben Repository. LabyMod 4 übernimmt gemeinsame

@@ -6,7 +6,7 @@ Die Shop-Schnittstellen wurden gegen `2.4.8-BETA-5` geprüft.
 
 ## Installation
 
-`schlangen-skipper-laby3-1.0.7.jar` in `LabyMod/addons-1.8` der gewünschten
+`schlangen-skipper-laby3-1.0.8.jar` in `LabyMod/addons-1.8` der gewünschten
 Instanz legen und Minecraft neu starten. Nicht zusätzlich eine zweite
 Schlangen-Skipper-JAR oder das gleichnamige Modul eines Multi-Addons aktivieren.
 
@@ -50,9 +50,9 @@ Im Ordner `Laby3` ausführen:
 .\gradlew.bat test build
 ```
 
-Installierbare Datei: **`schlangen-skipper-laby3-1.0.7.jar`**, direkt in `Laby3`.
+Installierbare Datei: **`schlangen-skipper-laby3-1.0.8.jar`**, direkt in `Laby3`.
 Sie entspricht der reobfuskierten Datei in `build/libs/`.
-`build/legacy-update/schlangen-skipper-1.0.7.jar` enthält identische Bytes,
+`build/legacy-update/schlangen-skipper-1.0.8.jar` enthält identische Bytes,
 ist aber nur für die Migration vom bisherigen Updater gedacht.
 
 ## Updates
