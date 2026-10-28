@@ -24,6 +24,24 @@ public class BrowserIntegrationTest {
     private static final String BROWSER = "de.laberlucas.botshopgui.gui.Laby4BotSelectionGui";
 
     @Test
+    public void laby3FavoritesAreNotEnabledOrBundledInLaby4() throws Exception {
+        try (JarFile jar = release()) {
+            assertNull(jar.getJarEntry("de/laberlucas/botshopgui/util/FavoriteBots.class"));
+            assertNull(jar.getJarEntry("de/laberlucas/botshopgui/gui/Laby3BotSelectionGui.class"));
+            ClassNode browser = readClass(jar, BROWSER.replace('.', '/') + ".class");
+            assertFalse(browser.methods.stream().anyMatch(method -> method.name.equals("favoritesEnabled")));
+            ClassNode shared = readClass(jar, "de/laberlucas/botshopgui/gui/BotSelectionGui.class");
+            MethodNode enabled = shared.methods.stream().filter(method -> method.name.equals("favoritesEnabled"))
+                .findFirst().orElseThrow();
+            var instructions = new java.util.ArrayList<Integer>();
+            for (var instruction : enabled.instructions) {
+                if (instruction.getOpcode() >= 0) instructions.add(instruction.getOpcode());
+            }
+            assertEquals(List.of(org.objectweb.asm.Opcodes.ICONST_0, org.objectweb.asm.Opcodes.IRETURN), instructions);
+        }
+    }
+
+    @Test
     public void releaseRegistersHudMixinUnderAddonNamespace() throws Exception {
         try (JarFile jar = release()) {
             var entry = jar.getJarEntry("1.8.9-schlangen_skipper.mixins.json");

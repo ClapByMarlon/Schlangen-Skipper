@@ -29,6 +29,7 @@ repositories {
 dependencies {
     compile files("libs/lm_api_mc1.8.9.jar")
     testCompile "junit:junit:4.13.2"
+    testCompile "org.ow2.asm:asm-tree:9.9.1"
 }
 
 minecraft {
@@ -65,3 +66,15 @@ task legacyUpdateBridge(type: Copy, dependsOn: "reobfJar") {
     rename { "schlangen-skipper-${project.version}.jar" }
 }
 build.dependsOn exportAddon, legacyUpdateBridge
+
+test {
+    exclude "**/BrowserFavoritesIntegrationTest.class"
+}
+
+task releaseTest(type: Test, dependsOn: "reobfJar") {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    include "**/BrowserFavoritesIntegrationTest.class"
+    systemProperty "releaseJar", jar.archivePath.absolutePath
+}
+build.dependsOn releaseTest

@@ -432,7 +432,7 @@ public class BotRepository {
         private final String apiUrl;
         private final String apiName;
 
-        private BotInfo(String uuid, String apiUrl, String apiName) {
+        public BotInfo(String uuid, String apiUrl, String apiName) {
             this.uuid = uuid;
             this.apiUrl = apiUrl;
             this.apiName = apiName;

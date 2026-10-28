@@ -27,6 +27,8 @@ public class BotSelectionGui extends GuiScreen {
     private static final int BUTTON_REFRESH = 1;
     private static final int BUTTON_CLOSE = 2;
     private static final int BUTTON_NAV_API = 100;
+    private static final int BUTTON_FAVORITES = 101;
+    private static final int[] STAR_PIXELS = {0x10, 0x10, 0x38, 0x1FF, 0xFE, 0x7C, 0x7C, 0xC6, 0x82};
 
     private static final int COLOR_ACCENT = 0xFF6E294E;
     private static final int COLOR_ACCENT_HOVER = 0xFF84365C;
@@ -55,6 +57,9 @@ public class BotSelectionGui extends GuiScreen {
     private boolean draggingScrollBar;
     private int scrollDragOffset;
     private ShaderGroup blurShader;
+    private boolean favoritesOnly;
+    private boolean viewInitialized;
+    private String favoritesError;
 
     public BotSelectionGui(BotShopAddon addon) {
         this.addon = addon;
@@ -62,6 +67,11 @@ public class BotSelectionGui extends GuiScreen {
 
     @Override
     public void initGui() {
+        if (!viewInitialized) {
+            favoritesOnly = favoritesEnabled() && initialFavoritesOnly();
+            favoritesError = getFavoritesLoadError();
+            viewInitialized = true;
+        }
         String search = searchField == null ? "" : searchField.getText();
         Keyboard.enableRepeatEvents(true);
         searchX = getScreenMargin() + getScaledX(18);
@@ -82,6 +92,15 @@ public class BotSelectionGui extends GuiScreen {
     protected GuiTextField createSearchField(FontRenderer font, int x, int y, int fieldWidth, int fieldHeight) {
         return new GuiTextField(0, font, x, y + Math.max(0, (fieldHeight - font.FONT_HEIGHT) / 2), fieldWidth, 18);
     }
+
+    // Platform-specific subclasses opt in; LabyMod 4 retains its existing browser.
+    protected boolean favoritesEnabled() { return false; }
+    protected boolean isFavorite(String uuid) { return false; }
+    protected boolean initialFavoritesOnly() { return false; }
+    protected void toggleFavorite(BotInfo bot) throws IOException { }
+    protected void saveFavoritesView(boolean only) throws IOException { }
+    protected String getFavoritesLoadError() { return null; }
+    protected List<BotInfo> getViewBots(List<BotInfo> current, boolean only) { return current; }
 
     @Override
     public void updateScreen() {
@@ -125,7 +144,7 @@ public class BotSelectionGui extends GuiScreen {
         drawPanelFrame(margin, contentTop, width - margin, bottom, 5, COLOR_CONTENT);
 
         int titleTextY = titleTop + (getTitleHeight() - Math.round(9 * getTitleScale())) / 2;
-        drawScaledCenteredString("\u00a7fSchlangen Skipper", titleTextY, getTitleScale());
+        drawScaledCenteredString("\u00a7fSchlangen Skipper" + (favoritesOnly ? " - Favoriten" : ""), titleTextY, getTitleScale());
 
         drawInsetField(searchX, searchY, searchX + searchWidth, searchY + getControlHeight(),
             searchField.isFocused() ? COLOR_ACCENT : 0xFF303946, COLOR_INPUT);
@@ -137,6 +156,15 @@ public class BotSelectionGui extends GuiScreen {
         drawRows(mouseX, mouseY);
         for (UiButton button : uiButtons) {
             button.draw(mc, mouseX, mouseY);
+        }
+        if (favoritesEnabled()) {
+            int index = getHoveredIndex(mouseX, mouseY);
+            if (index >= 0 && index < filteredBots.size()
+                && getFavoriteButton(index - scrollOffset).contains(mouseX, mouseY)) {
+                String tooltip = isFavorite(filteredBots.get(index).getUuid())
+                    ? "Aus Favoriten entfernen" : "Zu Favoriten hinzuf\u00fcgen";
+                drawHoveringText(Collections.singletonList(tooltip), mouseX, mouseY);
+            }
         }
     }
 
@@ -177,8 +205,25 @@ public class BotSelectionGui extends GuiScreen {
 
         int index = getHoveredIndex(mouseX, mouseY);
         if (index >= 0 && index < filteredBots.size()) {
+            if (handleFavoriteClick(index, mouseX, mouseY)) {
+                return;
+            }
             addon.openBotshop(filteredBots.get(index));
         }
+    }
+
+    private boolean handleFavoriteClick(int index, int mouseX, int mouseY) {
+        if (!favoritesEnabled() || !getFavoriteButton(index - scrollOffset).contains(mouseX, mouseY)) {
+            return false;
+        }
+        try {
+            toggleFavorite(filteredBots.get(index));
+            favoritesError = null;
+            refreshFilteredBots();
+        } catch (IOException failure) {
+            favoritesError = "\u00a7cFavoriten konnten nicht gespeichert werden.";
+        }
+        return true;
     }
 
     @Override
@@ -221,7 +266,11 @@ public class BotSelectionGui extends GuiScreen {
     private void drawStatus() {
         BotRepository repository = addon.getBotRepository();
         int total = repository == null ? 0 : repository.size();
-        String status = "\u00a7f" + filteredBots.size() + "\u00a77/" + total + " Bots";
+        if (favoritesOnly && repository != null) {
+            total = getViewBots(repository.getBots(), true).size();
+        }
+        String status = "\u00a7f" + filteredBots.size() + "\u00a77/" + total
+            + (favoritesOnly ? " Favoriten" : " Bots");
         if (repository != null && repository.isLoading()) {
             status += " \u00a7e(lade...)";
         }
@@ -238,6 +287,9 @@ public class BotSelectionGui extends GuiScreen {
             status = botshopStatus;
         } else if (addon.getUpdateStatus() != null) {
             status = addon.getUpdateStatus();
+        }
+        if (favoritesError != null) {
+            status = favoritesError;
         }
         int margin = getScreenMargin();
         int actionWidth = getToolbarActionWidth();
@@ -261,7 +313,8 @@ public class BotSelectionGui extends GuiScreen {
 
         if (filteredBots.isEmpty()) {
             drawListCardFrame(listX, listY, listX + listWidth, listY + cardHeight, COLOR_SURFACE, false);
-            drawCenteredString(fontRendererObj, "\u00a77Keine Bots gefunden.", listX + listWidth / 2, listY + (cardHeight - 8) / 2, 0xFFFFFF);
+            String emptyText = favoritesOnly ? "\u00a77Keine Favoriten gefunden." : "\u00a77Keine Bots gefunden.";
+            drawCenteredString(fontRendererObj, emptyText, listX + listWidth / 2, listY + (cardHeight - 8) / 2, 0xFFFFFF);
             drawScrollBar(visibleRows, mouseX, mouseY);
             return;
         }
@@ -281,6 +334,12 @@ public class BotSelectionGui extends GuiScreen {
 
             int nameY = y + Math.max(5, getScaledY(26)) + (getRowControlHeight() - 8) / 2;
             int nameWidth = Math.max(60, listWidth - getScaledX(30));
+            if (favoritesEnabled()) {
+                UiButton star = getFavoriteButton(row);
+                nameWidth = Math.max(1, star.x - listX - getScaledX(20));
+                star.draw(mc, mouseX, mouseY);
+                drawFavoriteStar(star, isFavorite(uuid));
+            }
             drawString(fontRendererObj, "\u00a7f" + trimToWidth(name, nameWidth), listX + getScaledX(10),
                 nameY, 0xFFFFFF);
 
@@ -305,13 +364,13 @@ public class BotSelectionGui extends GuiScreen {
         ensureSelectedApiExists();
         String search = searchField == null ? "" : searchField.getText().trim().toLowerCase(Locale.ROOT);
         String normalizedSearch = search.replace("-", "");
-        List<BotInfo> bots = repository.getBots();
+        List<BotInfo> bots = getViewBots(repository.getBots(), favoritesOnly);
 
         List<BotInfo> result = new ArrayList<BotInfo>();
         for (BotInfo bot : bots) {
             String uuid = bot.getUuid();
             String name = addon.getBotDisplayName(uuid);
-            if (name == null) {
+            if ((name == null && !favoritesOnly) || (favoritesOnly && !isFavorite(uuid))) {
                 continue;
             }
             boolean matchesApiFilter = selectedApiUrl == null || sameApi(selectedApiUrl, bot.getApiUrl());
@@ -365,14 +424,23 @@ public class BotSelectionGui extends GuiScreen {
         int tabsRight = width - margin - getScaledX(17);
         int navButtonHeight = getNavButtonHeight();
         int tabY = getNavTop() + Math.max(4, (getNavHeight() - navButtonHeight) / 2);
+        int apiRight = tabsRight;
+        if (favoritesEnabled()) {
+            String label = favoritesOnly ? "Alle Bots" : "Favoriten";
+            int favoritesWidth = Math.max(getScaledX(200), fontRendererObj.getStringWidth(label) + 24);
+            apiRight = tabsRight - favoritesWidth - actionGap;
+            uiButtons.add(new UiButton(BUTTON_FAVORITES, apiRight + actionGap, tabY,
+                favoritesWidth, navButtonHeight, label,
+                favoritesOnly ? COLOR_ACCENT : COLOR_SURFACE_HOVER, COLOR_ACCENT_HOVER));
+        }
         String apiLabel = "API: " + getSelectedApiLabel();
         uiButtons.add(new UiButton(
             BUTTON_NAV_API,
             tabsLeft,
             tabY,
-            tabsRight - tabsLeft,
+            apiRight - tabsLeft,
             navButtonHeight,
-            trimToWidth(apiLabel, tabsRight - tabsLeft - 20),
+            trimToWidth(apiLabel, apiRight - tabsLeft - 20),
             COLOR_ACCENT,
             COLOR_ACCENT_HOVER
         ));
@@ -380,6 +448,23 @@ public class BotSelectionGui extends GuiScreen {
     }
 
     private void handleButton(int buttonId) {
+        if (buttonId == BUTTON_FAVORITES && favoritesEnabled()) {
+            try {
+                saveFavoritesView(!favoritesOnly);
+                favoritesOnly = !favoritesOnly;
+                if (favoritesOnly) {
+                    selectedApiUrl = null;
+                    searchField.setText("");
+                }
+                favoritesError = null;
+                scrollOffset = 0;
+                refreshFilteredBots();
+                rebuildButtons();
+            } catch (IOException failure) {
+                favoritesError = "\u00a7cFavoritenansicht konnte nicht gespeichert werden.";
+            }
+            return;
+        }
         if (buttonId == BUTTON_REFRESH) {
             if (addon.getBotRepository() != null) {
                 addon.getBotRepository().refreshNow();
@@ -438,7 +523,7 @@ public class BotSelectionGui extends GuiScreen {
         int cardHeight = rowHeight - Math.max(4, getScaledY(5));
         int visibleRows = getVisibleRows();
 
-        if (mouseX < listX || mouseX > listX + listWidth || mouseY < listY || mouseY > listY + rowHeight * visibleRows) {
+        if (mouseX < listX || mouseX > listX + listWidth || mouseY < listY || mouseY >= listY + rowHeight * visibleRows) {
             return -1;
         }
         if ((mouseY - listY) % rowHeight > cardHeight) {
@@ -451,6 +536,36 @@ public class BotSelectionGui extends GuiScreen {
     private String getName(String uuid) {
         String name = addon.getBotDisplayName(uuid);
         return name == null ? "Name wird geladen..." : name;
+    }
+
+    private UiButton getFavoriteButton(int row) {
+        int size = Math.max(22, getRowControlHeight());
+        int right = width - getScreenMargin() - getScaledX(71) - getScaledX(10);
+        int top = getListTop() + row * getRowHeight() + Math.max(5, getScaledY(26));
+        return new UiButton(-1, right - size, top, size, size, "", COLOR_SURFACE, COLOR_SURFACE_HOVER);
+    }
+
+    private static void drawFavoriteStar(UiButton button, boolean selected) {
+        int pixel = Math.max(1, (button.height - 10) / 9);
+        int left = button.x + (button.width - 9 * pixel) / 2;
+        int top = button.y + (button.height - 9 * pixel) / 2;
+        int color = selected ? 0xFFFFCE59 : 0xFFADB5C1;
+        for (int y = 0; y < STAR_PIXELS.length; y++) {
+            for (int x = 0; x < 9; x++) {
+                if ((STAR_PIXELS[y] & (1 << x)) == 0) {
+                    continue;
+                }
+                boolean interior = x > 0 && x < 8 && y > 0 && y < 8
+                    && (STAR_PIXELS[y] & (1 << (x - 1))) != 0
+                    && (STAR_PIXELS[y] & (1 << (x + 1))) != 0
+                    && (STAR_PIXELS[y - 1] & (1 << x)) != 0
+                    && (STAR_PIXELS[y + 1] & (1 << x)) != 0;
+                if (selected || !interior) {
+                    drawRect(left + x * pixel, top + y * pixel,
+                        left + (x + 1) * pixel, top + (y + 1) * pixel, color);
+                }
+            }
+        }
     }
 
     private int getVisibleRows() {

@@ -1,7 +1,8 @@
 package de.laberlucas.botshopgui;
 
 import de.laberlucas.botshopgui.feature.ClientTickHandler;
-import de.laberlucas.botshopgui.gui.BotSelectionGui;
+import de.laberlucas.botshopgui.gui.Laby3BotSelectionGui;
+import de.laberlucas.botshopgui.util.FavoriteBots;
 import de.laberlucas.botshopgui.settings.BotShopSettings;
 import de.laberlucas.botshopgui.util.BotNameResolver;
 import de.laberlucas.botshopgui.util.BotRepository.BotInfo;
@@ -32,6 +33,7 @@ public class BotShopAddon extends LabyModAddon {
     private BotRepository botRepository;
     private BotNameResolver botNameResolver;
     private GrieferUtilsBridge grieferUtilsBridge;
+    private FavoriteBots favorites;
     private final ClientTickHandler tickHandler = new ClientTickHandler(this);
 
     public BotShopAddon() {
@@ -44,6 +46,9 @@ public class BotShopAddon extends LabyModAddon {
         ensureSettings();
 
         botNameResolver = new BotNameResolver(getConfig(), getBotNameCacheFile());
+        favorites = new FavoriteBots(new File(Minecraft.getMinecraft().mcDataDir,
+            "LabyMod/addons-1.8/config/schlangen-skipper-favorites.json"));
+        prefetchBotNames(favorites.getIds());
         botRepository = new BotRepository(new BotUpdateListener() {
             @Override
             public void onBotsUpdated(Set<String> botIds) {
@@ -127,7 +132,7 @@ public class BotShopAddon extends LabyModAddon {
             botRepository.refreshIfNeeded(false);
         }
 
-        mc.displayGuiScreen(new BotSelectionGui(this));
+        mc.displayGuiScreen(new Laby3BotSelectionGui(this, favorites));
     }
 
     public void openBotshop(BotInfo botInfo) {
